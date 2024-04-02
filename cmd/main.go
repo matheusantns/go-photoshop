@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -13,10 +12,6 @@ import (
 
 type Templates struct {
 	templates *template.Template
-}
-
-type Count struct {
-	Count int
 }
 
 type Layers struct {
@@ -33,25 +28,16 @@ func newTemplate() *Templates {
 	}
 }
 
-// layersResult, err := psd.HandlePSD(psdModel)
-// 		if err != nil {
-// 			return fmt.Errorf("deu erro - %w", err)
-// 		}
+var data psd.InputData
 
-// 		layers := Layers{Layers: layersResult}
+type Steps struct {
+	Steps  []int
+	Active int
+}
 
-func getCheckboxValues(str []string) []psd.ExportType {
-	var exportTypes []psd.ExportType
-
-	for _, value := range str {
-		intValue, err := strconv.Atoi(value)
-		if err != nil {
-			continue
-		}
-		exportTypes = append(exportTypes, psd.ExportType(intValue))
-	}
-
-	return exportTypes
+var steps = Steps{
+	Steps:  []int{1, 2, 3},
+	Active: 1,
 }
 
 func main() {
@@ -61,7 +47,7 @@ func main() {
 	e.Renderer = newTemplate()
 
 	e.GET("/", func(c echo.Context) error {
-		return c.Render(200, "index", nil)
+		return c.Render(200, "index", steps)
 	})
 
 	e.POST("/psd/get-fields", func(c echo.Context) error {
@@ -70,15 +56,14 @@ func main() {
 			return fmt.Errorf("deu erro - %w", err)
 		}
 
-		exportTypes := getCheckboxValues(request["ExportTypes"])
-
-		data := psd.InputData{
+		data = psd.InputData{
 			PSExecutableFilePath: request["PSExecutableFilePath"][0],
 			ExportDir:            request["ExportDir"][0],
-			ExportTypes:          exportTypes,
 			PSDTemplate:          request["PSDTemplate"][0],
 			PrefixNameForFile:    request["PrefixNameForFile"][0],
 		}
+
+		data.GetCheckboxValues(request["ExportTypes"])
 
 		fmt.Println(data)
 

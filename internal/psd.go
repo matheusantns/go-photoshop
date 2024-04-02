@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -24,6 +25,20 @@ type InputData struct {
 	PSDTemplate          string
 	PrefixNameForFile    string
 	// DataToRenderOnPSD    map[string]interface{}
+}
+
+func (data *InputData) GetCheckboxValues(str []string) {
+	var exportTypes []ExportType
+
+	for _, value := range str {
+		intValue, err := strconv.Atoi(value)
+		if err != nil {
+			continue
+		}
+		exportTypes = append(exportTypes, ExportType(intValue))
+	}
+
+	data.ExportTypes = exportTypes
 }
 
 func FindPSDHeader(filepath string) ([]byte, error) {
@@ -87,8 +102,6 @@ func FindTextLayers(xmp string) ([]Layer, error) {
 }
 
 func HandlePSD(filepath string) ([]Layer, error) {
-	// filepath := "C:\\Users\\teteu\\OneDrive\\Documentos\\Tarkuss\\Guia_dos_Precos\\00 - Modelo - Patrulha da Pascoa.psd"
-
 	data, err := FindPSDHeader(filepath)
 	if err != nil {
 		fmt.Println("Erro ao abrir", err)
