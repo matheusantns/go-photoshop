@@ -8,18 +8,14 @@
     <script src="https://unpkg.com/htmx.org@1.9.11"
         integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
         crossorigin="anonymous"></script>
-    <title>Document</title>
+        <title>Document</title>
+    <link rel="stylesheet" href="static/index.css">
 </head>
 
 <body>
     <div class="container">
-        <form hx-post="/psd/get-fields" enctype="multipart/form-data" method="post">
-            <input type="text" id="psd" name="psd" accept=".psd" />
-            <hr>
-            <button type="submit">Enviar</button>
-        </form>
+    {{template "FormOne" . }}
     </div>
-    {{ template "Layers" . }}
 </body>
 
 </html>
@@ -27,10 +23,43 @@
 
 {{ block "Layers" .}}
 <div>
-    {{ if gt (len .Layers) 0 }}
+    {{ if and (.Layers) (gt (len .Layers) 0) }}
     {{range .Layers}}
-    <h1>Teste</h1>
+    <h1>{{.}}</h1>
     {{end}}
     {{end}}
 </div>
+{{ end }}
+
+{{ block "FormOne" . }}
+    <form hx-post="/psd/get-fields" enctype="multipart/form-data" method="post">
+        <div class="input-container">
+            <label for="PSDTemplate">Caminho do seu PSD modelo</label>
+            <input type="text" id="PSDTemplate" name="PSDTemplate" placeholder="Insira o caminho para seu PSD modelo" />
+        </div>
+        <div class="input-container">
+            <label for="PSExecutableFilePath">Caminho do executável do Photoshop</label>
+            <input type="text" id="PSExecutableFilePath" name="PSExecutableFilePath" placeholder="Insira o caminho para local do executável do Photoshop" />
+        </div>
+        <div class="input-container">
+            <label for="ExportDir">Local para exportação dos arquivos</label>
+            <input type="text" id="ExportDir" name="ExportDir" placeholder="Insira o caminho para local do executável do Photoshop" />
+        </div>
+        <div class="input-container">
+            <label for="PrefixNameForFile">Prefixo para nome dos arquivos exportados</label>
+            <input type="text" id="PrefixNameForFile" name="PrefixNameForFile" placeholder="Insira o prefixo para nome dos arquivos exportados" />
+        </div>
+        <div class="input-container">
+            <p>Extensões para exportação</p>
+            <div class="checkbox">
+                <input type="checkbox" id="export-type-psd" name="ExportTypes" value="0">
+                <label for="export-type-psd">PSD</label>
+                <input type="checkbox" id="export-type-png" name="ExportTypes" value="1">
+                <label for="export-type-png">PNG</label>
+                <input type="checkbox" id="export-type-jpg" name="ExportTypes" value="2">
+                <label for="export-type-jpg">JPG</label>
+            </div>
+        </div>
+        <button type="submit">Próximo</button>
+    </form>
 {{ end }}

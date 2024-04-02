@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -32,39 +33,56 @@ func newTemplate() *Templates {
 	}
 }
 
+// layersResult, err := psd.HandlePSD(psdModel)
+// 		if err != nil {
+// 			return fmt.Errorf("deu erro - %w", err)
+// 		}
+
+// 		layers := Layers{Layers: layersResult}
+
+func getCheckboxValues(str []string) []psd.ExportType {
+	var exportTypes []psd.ExportType
+
+	for _, value := range str {
+		intValue, err := strconv.Atoi(value)
+		if err != nil {
+			continue
+		}
+		exportTypes = append(exportTypes, psd.ExportType(intValue))
+	}
+
+	return exportTypes
+}
+
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
-
-	count := Count{Count: 0}
-	layers := Layers{Layers: make([]psd.Layer, 0)}
+	e.Static("/static", "views/static")
 	e.Renderer = newTemplate()
 
 	e.GET("/", func(c echo.Context) error {
-		if len(layers.Layers) == 0 {
-			fmt.Println("Layers vazia")
-		}
-
-		return c.Render(200, "index", struct {
-			Count  Count
-			Layers Layers
-		}{count, layers})
+		return c.Render(200, "index", nil)
 	})
 
 	e.POST("/psd/get-fields", func(c echo.Context) error {
-		psdPath := c.FormValue("psd")
-		layersResult, err := psd.HandlePSD(psdPath)
+		request, err := c.FormParams()
 		if err != nil {
 			return fmt.Errorf("deu erro - %w", err)
 		}
 
-		layers.Layers = layersResult
+		exportTypes := getCheckboxValues(request["ExportTypes"])
 
-		if len(layers.Layers) == 0 {
-			fmt.Println("Layers vazia")
+		data := psd.InputData{
+			PSExecutableFilePath: request["PSExecutableFilePath"][0],
+			ExportDir:            request["ExportDir"][0],
+			ExportTypes:          exportTypes,
+			PSDTemplate:          request["PSDTemplate"][0],
+			PrefixNameForFile:    request["PrefixNameForFile"][0],
 		}
 
-		return c.Render(200, "index", layers)
+		fmt.Println(data)
+
+		return c.Render(200, "index", nil)
 	})
 
 	e.Logger.Fatal(e.Start(":42069"))
