@@ -1,0 +1,9 @@
+{{ block "Steps" . }}
+{{ $steps := .Steps.Steps }}
+<!-- {{ $activeStep := .Steps.Active }} -->
+<div class="steps-container">
+    {{ range $index, $step := $steps }}
+    <div class="step-item {{ if eq $step $.Steps.Active }}step-item-active{{ end }}">{{ $step }}</div>
+    {{ end }}
+</div>
+{{end}}

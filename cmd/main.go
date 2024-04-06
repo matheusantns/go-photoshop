@@ -14,8 +14,8 @@ type Templates struct {
 	templates *template.Template
 }
 
-type Layers struct {
-	Layers []psd.Layer
+type TextLayer struct {
+	TextLayer []psd.Layer
 }
 
 func (t *Templates) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
@@ -28,17 +28,25 @@ func newTemplate() *Templates {
 	}
 }
 
-var data psd.InputData
-
 type Steps struct {
 	Steps  []int
 	Active int
 }
 
-var steps = Steps{
-	Steps:  []int{1, 2, 3},
-	Active: 1,
+type Error struct {
+	Text  string
+	Valid bool
 }
+
+type PageData struct {
+	Title              string
+	Steps              Steps
+	FirstForm          psd.InputData
+	Error              Error
+	AvailableTextLayer []psd.Layer
+}
+
+var pageData PageData
 
 func main() {
 	e := echo.New()
@@ -46,28 +54,48 @@ func main() {
 	e.Static("/static", "views/static")
 	e.Renderer = newTemplate()
 
+	pageData.Steps = Steps{
+		Steps:  []int{1, 2, 3},
+		Active: 1,
+	}
+
 	e.GET("/", func(c echo.Context) error {
-		return c.Render(200, "index", steps)
+		pageData.Title = "Preencha as informações a seguir"
+		return c.Render(200, "index", pageData)
 	})
 
-	e.POST("/psd/get-fields", func(c echo.Context) error {
+	e.POST("/step-one", func(c echo.Context) error {
 		request, err := c.FormParams()
 		if err != nil {
 			return fmt.Errorf("deu erro - %w", err)
 		}
 
-		data = psd.InputData{
+		pageData.FirstForm = psd.InputData{
 			PSExecutableFilePath: request["PSExecutableFilePath"][0],
 			ExportDir:            request["ExportDir"][0],
 			PSDTemplate:          request["PSDTemplate"][0],
 			PrefixNameForFile:    request["PrefixNameForFile"][0],
 		}
+		pageData.FirstForm.GetCheckboxValues(request["ExportTypes"])
 
-		data.GetCheckboxValues(request["ExportTypes"])
+		pageData.AvailableTextLayer, err = psd.HandlePSD(pageData.FirstForm.PSDTemplate)
+		if err != nil {
+			fmt.Println("deu erro", err)
+			pageData.Error = Error{
+				Text:  "Arquivo modelo inválido",
+				Valid: true,
+			}
+			return c.Render(200, "form-step-one.html", pageData)
+		}
 
-		fmt.Println(data)
+		pageData.Steps.Active = 2
+		pageData.Title = "Quais são suas variáveis?"
+		pageData.Error = Error{
+			Text:  "",
+			Valid: false,
+		}
 
-		return c.Render(200, "index", nil)
+		return c.Render(200, "form-step-two.html", pageData)
 	})
 
 	e.Logger.Fatal(e.Start(":42069"))

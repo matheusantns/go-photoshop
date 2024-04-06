@@ -1,0 +1,46 @@
+{{ block "FormTwo" . }}
+{{ template "progress-bar.html" . }}
+{{ template "form-title.html" . }}
+{{ template "toast-error.html" . }}
+
+<h2><b>Camadas de texto disponíveis no modelo PSD</b></h2>
+<p>Selecione quais camadas você quer para ser suas variáveis</p>
+<br>
+<div class="input-container">
+    <label for="PSDTemplate">Caminho do seu PSD modelo</label>
+    <input form="form-one" required type="text" id="PSDTemplate" name="PSDTemplate"
+        placeholder="Insira o caminho para seu PSD modelo" />
+</div>
+<div class="input-container">
+    <label for="PSExecutableFilePath">Caminho do executável do Photoshop</label>
+    <input form="form-one" required type="text" id="PSExecutableFilePath" name="PSExecutableFilePath"
+        placeholder="Insira o caminho para local do executável do Photoshop" />
+</div>
+<div class="input-container">
+    <label for="ExportDir">Local para exportação dos arquivos</label>
+    <input form="form-one" required type="text" id="ExportDir" name="ExportDir"
+        placeholder="Insira o caminho para local do executável do Photoshop" />
+</div>
+<div class="input-container">
+    <label for="PrefixNameForFile">Prefixo para nome dos arquivos exportados</label>
+    <input form="form-one" required type="text" id="PrefixNameForFile" name="PrefixNameForFile"
+        placeholder="Insira o prefixo para nome dos arquivos exportados" />
+</div>
+<div class="input-container">
+    <p>Extensões para exportação</p>
+    <div class="checkbox">
+        <input form="form-one" type="checkbox" id="export-type-psd" name="ExportTypes" value="0">
+        <label class="checkbox-label" for="export-type-psd">PSD</label>
+        <input form="form-one" type="checkbox" id="export-type-png" name="ExportTypes" value="1">
+        <label class="checkbox-label" for="export-type-png">PNG</label>
+        <input form="form-one" type="checkbox" id="export-type-jpg" name="ExportTypes" value="2">
+        <label class="checkbox-label" for="export-type-jpg">JPG</label>
+    </div>
+</div>
+<div class="button-container">
+    <button class="back">Voltar</button>
+    <button hx-trigger="click[validateForm(event)]" form="form-one" type="submit">Próximo</button>
+</div>
+<form method="post" hx-post="/step-one" id="form-one" hx-target="#root-container" class="form-container">
+</form>
+{{ end }}

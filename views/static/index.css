@@ -42,7 +42,14 @@ input[type="text"] {
     border-radius: 10px;
 }
 
+.button-container {
+    display: flex;
+    align-items: stretch;
+    gap: 10px
+}
+
 button {
+    flex-grow: 1 !important;
     all: unset;
     background-color: #2adb86;
     color: #ffffff;
@@ -52,6 +59,10 @@ button {
 
     cursor: pointer;
     transition: all 0.2s ease;
+}
+
+.back {
+    background-color: #0b2239;
 }
 
 button:hover {
@@ -71,6 +82,26 @@ button:hover {
     width: 100%;
 }
 
+.form-title {
+    margin-bottom: 20px;
+}
+
+.form-error {
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1px solid rgb(255, 56, 56);
+    background-color: rgb(255, 135, 135);
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    gap: 5px;
+}
+
+#form-error {
+    display: none;
+}
 
 .step-item {
     display: flex;

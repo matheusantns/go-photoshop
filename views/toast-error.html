@@ -1,0 +1,14 @@
+{{block "Error" .}}
+<div id="form-error" class="form-error">
+    <span class="material-symbols-outlined">error</span>
+    <p>Selecione ao menos um tipo de extensão.</p>
+</div>
+
+{{ if .Error.Valid }}
+<div class="form-error">
+    <span class="material-symbols-outlined">error</span>
+    <p>{{.Error.Text}}</p>
+</div>
+{{ end }}
+
+{{end}}
