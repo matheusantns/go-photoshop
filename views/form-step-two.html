@@ -14,10 +14,13 @@
 <h2><b>Camadas de imagens</b></h2>
 <p>Adicione o nome exato das camadas de imagem do seu PSD que você quer substituir</p>
 <br>
+<div id="layer-image-container" class="input-container">
+    {{template "insert-new-image-layer.html" .}}
+</div>
 <div class="button-container">
     <button method="get" hx-get="/" hx-target="#root-container" class="back">Voltar</button>
-    <button hx-trigger="click[validateForm(event)]" form="form-one" type="submit">Próximo</button>
+    <button form="form-two" type="submit">Próximo</button>
 </div>
-<form method="post" hx-post="/step-one" id="form-one" hx-target="#root-container" class="form-container">
+<form method="post" hx-post="/step-one" id="form-two" hx-target="#root-container" class="form-container">
 </form>
 {{ end }}

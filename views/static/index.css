@@ -150,3 +150,27 @@ button:hover {
     flex-direction: column;
     justify-content: center;
 }
+
+.image-layer-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.insert-new-image-layer {
+    background-color: rgb(218, 218, 218);
+    padding: 10px;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.insert-new-image-layer:hover {
+    background-color: rgb(197, 197, 197);
+
+}

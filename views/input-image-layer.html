@@ -1,0 +1,7 @@
+{{ block "InputImageLayer" . }}
+<div class="image-layer-input">
+    <input style="flex: 1" type="text"></input>
+    <span style="cursor: pointer;" hx-swap="outerHTML" hx-target="closest div" hx-delete="/delete-input-image-layer"
+        class="material-symbols-outlined">Delete</span>
+</div>
+{{end}}

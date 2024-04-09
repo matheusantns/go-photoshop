@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -61,7 +62,16 @@ func main() {
 
 	e.GET("/", func(c echo.Context) error {
 		pageData.Title = "Preencha as informações a seguir"
+		pageData.Steps.Active = 1
 		return c.Render(200, "index", pageData)
+	})
+
+	e.GET("/insert-input-image-layer", func(c echo.Context) error {
+		return c.Render(200, "input-image-layer.html", nil)
+	})
+
+	e.DELETE("/delete-input-image-layer", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
 	})
 
 	e.POST("/step-one", func(c echo.Context) error {
