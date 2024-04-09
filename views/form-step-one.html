@@ -28,11 +28,11 @@
 <div class="input-container">
     <p>Extensões para exportação</p>
     <div class="checkbox">
-        <input form="form-one" type="checkbox" id="export-type-psd" name="ExportTypes" value="0">
+        <input {{range $index, $value := .FirstForm.ExportTypes}}{{if eq $value 0}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-psd" name="ExportTypes" value="0">
         <label class="checkbox-label" for="export-type-psd">PSD</label>
-        <input form="form-one" type="checkbox" id="export-type-png" name="ExportTypes" value="1">
+        <input {{range $index, $value := .FirstForm.ExportTypes}}{{if eq $value 1}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-png" name="ExportTypes" value="1">
         <label class="checkbox-label" for="export-type-png">PNG</label>
-        <input form="form-one" type="checkbox" id="export-type-jpg" name="ExportTypes" value="2">
+        <input {{range $index, $value := .FirstForm.ExportTypes}}{{if eq $value 2}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-jpg" name="ExportTypes" value="2">
         <label class="checkbox-label" for="export-type-jpg">JPG</label>
     </div>
 </div>

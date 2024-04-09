@@ -144,3 +144,9 @@ button:hover {
     margin-left: 5px;
     margin-right: 10px;
 }
+
+.layer-checkbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
