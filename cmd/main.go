@@ -39,10 +39,16 @@ type Error struct {
 	Valid bool
 }
 
+type SecondForm struct {
+	SelectedTextLayers []string
+	ImageLayers        []string
+}
+
 type PageData struct {
 	Title              string
 	Steps              Steps
 	FirstForm          psd.InputData
+	SecondForm         SecondForm
 	Error              Error
 	AvailableTextLayer []psd.Layer
 }
@@ -71,6 +77,19 @@ func main() {
 	})
 
 	e.DELETE("/delete-input-image-layer", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
+	})
+
+	e.POST("/step-two", func(c echo.Context) error {
+		request, err := c.FormParams()
+		if err != nil {
+			return fmt.Errorf("deu erro - %w", err)
+		}
+
+		pageData.SecondForm.ImageLayers = request["ImageLayer"]
+		pageData.SecondForm.SelectedTextLayers = request["TextLayer"]
+		fmt.Println(pageData.SecondForm)
+
 		return c.NoContent(http.StatusOK)
 	})
 

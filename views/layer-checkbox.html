@@ -2,7 +2,7 @@
 {{ $layers := .AvailableTextLayer }}
 {{range $index, $layer := $layers}}
 <div>
-    <input form="form-two" type="checkbox" id="layer-{{$index}}" name="TextLayer" value={{$index}}>
+    <input form="form-two" type="checkbox" id="layer-{{$index}}" name="TextLayer" value={{$layer}}>
     <label class="checkbox-label" for="layer-{{$index}}">{{$layer}}</label>
 </div>
 {{end}}
