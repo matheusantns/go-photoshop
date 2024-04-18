@@ -1,0 +1,24 @@
+{{ block "TableAssignFields" . }}
+{{ $fields := .ThirdForm.Fields }}
+<table class="table-assign-container">
+    <tr>
+        <thead>
+            <th>Suas variáveis</th>
+            <th>Atribua um campo de seu CSV</th>
+        </thead>
+    </tr>
+    {{ range .SecondForm.Layers }}
+    <tr>
+        <td>{{ . }}</td>
+        <td>
+            <select class="select-field" id="fields" name="fields">
+                {{ $layer := . }}
+                {{ range $index, $field := $fields }}
+                    <option {{ if eq (printf "%s" . | upper) (printf "%s" $layer | upper) }} selected {{ end }} value="{{ $field }}">{{ $field }}</option>
+                {{ end }}
+            </select>
+        </td>
+    </tr>
+    {{end}}
+</table>
+{{end}}

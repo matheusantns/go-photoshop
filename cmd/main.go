@@ -1,10 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"html/template"
 	"io"
-	"net/http"
+	"log"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -40,8 +41,11 @@ type Error struct {
 }
 
 type SecondForm struct {
-	SelectedTextLayers []string
-	ImageLayers        []string
+	Layers []string
+}
+
+type ThirdForm struct {
+	Fields []string
 }
 
 type PageData struct {
@@ -49,6 +53,7 @@ type PageData struct {
 	Steps              Steps
 	FirstForm          psd.InputData
 	SecondForm         SecondForm
+	ThirdForm          ThirdForm
 	Error              Error
 	AvailableTextLayer []psd.Layer
 }
@@ -62,7 +67,7 @@ func main() {
 	e.Renderer = newTemplate()
 
 	pageData.Steps = Steps{
-		Steps:  []int{1, 2, 3},
+		Steps:  []int{1, 2, 3, 4},
 		Active: 1,
 	}
 
@@ -77,20 +82,7 @@ func main() {
 	})
 
 	e.DELETE("/delete-input-image-layer", func(c echo.Context) error {
-		return c.NoContent(http.StatusOK)
-	})
-
-	e.POST("/step-two", func(c echo.Context) error {
-		request, err := c.FormParams()
-		if err != nil {
-			return fmt.Errorf("deu erro - %w", err)
-		}
-
-		pageData.SecondForm.ImageLayers = request["ImageLayer"]
-		pageData.SecondForm.SelectedTextLayers = request["TextLayer"]
-		fmt.Println(pageData.SecondForm)
-
-		return c.NoContent(http.StatusOK)
+		return c.NoContent(200)
 	})
 
 	e.POST("/step-one", func(c echo.Context) error {
@@ -125,6 +117,43 @@ func main() {
 		}
 
 		return c.Render(200, "form-step-two.html", pageData)
+	})
+
+	e.POST("/step-two", func(c echo.Context) error {
+		request, err := c.FormParams()
+		if err != nil {
+			return fmt.Errorf("deu erro - %w", err)
+		}
+
+		pageData.SecondForm.Layers = append(request["ImageLayer"], request["TextLayer"]...)
+		pageData.Steps.Active = 3
+		pageData.Title = "Insira o CSV com seus dados"
+
+		return c.Render(200, "form-step-three.html", pageData)
+	})
+
+	e.POST("/step-three", func(c echo.Context) error {
+		pageData.Steps.Active = 4
+		pageData.Title = "Atribua os campos as suas variáveis"
+		file, err := c.FormFile("source-csv")
+		if err != nil {
+			return fmt.Errorf("deu erro - %w", err)
+		}
+
+		src, err := file.Open()
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		csvReader := csv.NewReader(src)
+		csvReader.Comma = ';'
+		pageData.ThirdForm.Fields, err = csvReader.Read()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return c.Render(200, "form-step-four.html", pageData)
 	})
 
 	e.Logger.Fatal(e.Start(":42069"))

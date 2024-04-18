@@ -145,6 +145,19 @@ button:hover {
     margin-right: 10px;
 }
 
+table, th, td {
+    border: 1px solid rgb(178, 178, 178);
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+.select-field {
+    border: 0;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
 .layer-checkbox {
     display: flex;
     flex-direction: column;
