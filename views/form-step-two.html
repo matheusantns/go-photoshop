@@ -2,6 +2,7 @@
 {{ template "progress-bar.html" . }}
 {{ template "form-title.html" . }}
 {{ template "toast-error.html" . }}
+{{ $imageLayers := .SecondForm.Layers }}
 
 <h2><b>Camadas de texto disponíveis no modelo PSD</b></h2>
 <p>Selecione quais camadas você quer para serem suas variáveis</p>
@@ -15,12 +16,14 @@
 <p>Adicione o nome exato das camadas de imagem do seu PSD que você quer substituir</p>
 <br>
 <div id="layer-image-container" class="input-container">
+    {{range $imageLayers }}
+        {{if eq .Type "Image"}}
+            {{ template "input-image-layer.html" .}}
+        {{end}}
+    {{end}}
     {{template "insert-new-image-layer.html" .}}
 </div>
-<div class="button-container">
-    <button method="get" hx-get="/" hx-target="#root-container" class="back">Voltar</button>
-    <button form="form-two" type="submit">Próximo</button>
-</div>
+{{template "navigation-buttons.html" . }}
 <form method="post" hx-post="/step-two" id="form-two" hx-target="#root-container" class="form-container">
 </form>
 {{ end }}

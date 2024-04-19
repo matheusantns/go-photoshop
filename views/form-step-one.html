@@ -36,7 +36,7 @@
         <label class="checkbox-label" for="export-type-jpg">JPG</label>
     </div>
 </div>
-<button hx-trigger="click[validateForm(event)]" form="form-one" type="submit">Próximo</button>
+<button hx-trigger="click[validateForm(event, 'ExportTypes')]" form="form-one" type="submit">Próximo</button>
 <form method="post" hx-post="/step-one" id="form-one" hx-target="#root-container" class="form-container">
 </form>
 {{ end }}

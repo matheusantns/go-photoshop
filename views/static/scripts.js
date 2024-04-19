@@ -1,5 +1,5 @@
-function validateForm(event) {
-    var checkboxes = document.getElementsByName("ExportTypes");
+function validateForm(event, elementName) {
+    var checkboxes = document.getElementsByName(elementName);
     var isChecked = false;
     for (var i = 0; i < checkboxes.length; i++) {
         if (checkboxes[i].checked) {

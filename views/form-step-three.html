@@ -6,7 +6,11 @@
     <br>
     <input name="source-csv" type="file" form="form-three" accept=".csv">
     <br>
-    <button form="form-three" type="submit">Próximo</button>
+    <br>
+    <div class="button-container">
+        <button method="get" hx-get="/step-two" hx-target="#root-container" class="back">Voltar</button>
+        <button form="form-three" type="submit">Próximo</button>
+    </div>
 </div>
 <form enctype="multipart/form-data" method="post" hx-post="/step-three" id="form-three" hx-target="#root-container" class="form-container">
 </form>

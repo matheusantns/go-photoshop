@@ -9,12 +9,12 @@
     </tr>
     {{ range .SecondForm.Layers }}
     <tr>
-        <td>{{ . }}</td>
+        <td>{{ .Name }}</td>
         <td>
             <select class="select-field" id="fields" name="fields">
-                {{ $layer := . }}
+                {{ $layer := .Name }}
                 {{ range $index, $field := $fields }}
-                    <option {{ if eq (printf "%s" . | upper) (printf "%s" $layer | upper) }} selected {{ end }} value="{{ $field }}">{{ $field }}</option>
+                    <option {{ if eq (ToUpper $layer) (ToUpper $field) }} selected {{ end }} value="{{ $field }}">{{ $field }}</option>
                 {{ end }}
             </select>
         </td>

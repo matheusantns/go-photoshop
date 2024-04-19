@@ -1,8 +1,9 @@
 {{block "LayerCheckbox" . }}
+{{ $checkedLayers := .SecondForm.Layers}}
 {{ $layers := .AvailableTextLayer }}
 {{range $index, $layer := $layers}}
 <div>
-    <input form="form-two" type="checkbox" id="layer-{{$index}}" name="TextLayer" value={{$layer}}>
+    <input {{range $index, $value := $checkedLayers}}{{if eq $value.Name $layer}} checked{{end}}{{end}} form="form-two" type="checkbox" id="layer-{{$index}}" name="TextLayer" value={{$layer}}>
     <label class="checkbox-label" for="layer-{{$index}}">{{$layer}}</label>
 </div>
 {{end}}

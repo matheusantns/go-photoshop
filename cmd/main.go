@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -25,9 +26,27 @@ func (t *Templates) Render(w io.Writer, name string, data interface{}, c echo.Co
 }
 
 func newTemplate() *Templates {
-	return &Templates{
-		templates: template.Must(template.ParseGlob("views/*.html")),
+	t := &Templates{
+		templates: template.New("").Funcs(template.FuncMap{
+			"ToUpper": strings.ToUpper,
+		}),
 	}
+
+	t.templates = template.Must(t.templates.ParseGlob("views/*.html"))
+
+	return t
+}
+
+func createLayers(names []string, layerType string) []Layer {
+	var layers []Layer
+	for _, name := range names {
+		layer := Layer{
+			Name: name,
+			Type: layerType,
+		}
+		layers = append(layers, layer)
+	}
+	return layers
 }
 
 type Steps struct {
@@ -40,8 +59,13 @@ type Error struct {
 	Valid bool
 }
 
+type Layer struct {
+	Name string
+	Type string
+}
+
 type SecondForm struct {
-	Layers []string
+	Layers []Layer
 }
 
 type ThirdForm struct {
@@ -50,12 +74,15 @@ type ThirdForm struct {
 
 type PageData struct {
 	Title              string
+	FieldToValidate    string
 	Steps              Steps
 	FirstForm          psd.InputData
 	SecondForm         SecondForm
 	ThirdForm          ThirdForm
 	Error              Error
 	AvailableTextLayer []psd.Layer
+	BackButtonRoute    string
+	ForwardButtonRoute string
 }
 
 var pageData PageData
@@ -74,6 +101,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		pageData.Title = "Preencha as informações a seguir"
 		pageData.Steps.Active = 1
+		pageData.FieldToValidate = "ExportTypes"
 		return c.Render(200, "index", pageData)
 	})
 
@@ -115,7 +143,16 @@ func main() {
 			Text:  "",
 			Valid: false,
 		}
+		pageData.BackButtonRoute = "/"
+		pageData.ForwardButtonRoute = "/step-two"
+		pageData.FieldToValidate = "TextLayer"
 
+		return c.Render(200, "form-step-two.html", pageData)
+	})
+
+	e.GET("/step-two", func(c echo.Context) error {
+		pageData.Steps.Active = 2
+		pageData.Title = "Quais são suas variáveis?"
 		return c.Render(200, "form-step-two.html", pageData)
 	})
 
@@ -125,7 +162,12 @@ func main() {
 			return fmt.Errorf("deu erro - %w", err)
 		}
 
-		pageData.SecondForm.Layers = append(request["ImageLayer"], request["TextLayer"]...)
+		imageLayers := createLayers(request["ImageLayer"], "Image")
+		textLayers := createLayers(request["TextLayer"], "Text")
+		pageData.BackButtonRoute = "/"
+		pageData.ForwardButtonRoute = "/step-two"
+
+		pageData.SecondForm.Layers = append(imageLayers, textLayers...)
 		pageData.Steps.Active = 3
 		pageData.Title = "Insira o CSV com seus dados"
 
