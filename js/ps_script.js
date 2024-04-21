@@ -1,12 +1,15 @@
-function loadJsonParser(){
-    var jsonParser = new File("C:\\Users\\teteu\\OneDrive\\Documentos\\Coding\\ps-automate\\js\\json2.js");
+var scriptFile = new File($.fileName);
+var scriptFolder = scriptFile.parent;
+
+function loadJsonParser(basedir){
+    var jsonParser = new File(basedir + "\\json2.js");
     jsonParser.open("r");
     var parser = jsonParser.read();
     eval(parser);
 }
 
-function loadParameters(){
-    var jsonFile = new File("C:\\Users\\teteu\\OneDrive\\Documentos\\Coding\\ps-automate\\js\\parameters.json");
+function loadParameters(basedir){
+    var jsonFile = new File(basedir + "\\parameters.json");
     jsonFile.open('r');
     var data = jsonFile.read();
     jsonFile.close();
@@ -136,8 +139,8 @@ function exportFile(doc, finalPath, type) {
     exportFunctions[exportType](doc, finalPathWithName);    
 }
 
-loadJsonParser()
-var parameters = loadParameters()
+loadJsonParser(scriptFolder)
+var parameters = loadParameters(scriptFolder)
 var items = parameters.Data
 var exportDir = parameters.ExportDir
 var prefix = parameters.PrefixNameForFile

@@ -1,5 +1,5 @@
 {{block "LayerCheckbox" . }}
-{{ $checkedLayers := .SecondForm.Layers}}
+{{ $checkedLayers := .FinalData.Layers}}
 {{ $layers := .AvailableTextLayer }}
 {{range $index, $layer := $layers}}
 <div>

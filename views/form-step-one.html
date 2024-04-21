@@ -5,34 +5,34 @@
 
 <div class="input-container">
     <label for="PSDTemplate">Caminho do seu PSD modelo</label>
-    <input value="{{ if .FirstForm.PSDTemplate }}{{.FirstForm.PSDTemplate}}{{end}}" form="form-one" required type="text"
+    <input value="{{ if .FinalData.PSDTemplate }}{{.FinalData.PSDTemplate}}{{end}}" form="form-one" required type="text"
         id="PSDTemplate" name="PSDTemplate" placeholder="Insira o caminho para seu PSD modelo" />
 </div>
 <div class="input-container">
     <label for="PSExecutableFilePath">Caminho do executável do Photoshop</label>
-    <input value="{{ if .FirstForm.PSExecutableFilePath }}{{.FirstForm.PSExecutableFilePath}}{{end}}" form="form-one"
+    <input value="{{ if .FinalData.PSExecutableFilePath }}{{.FinalData.PSExecutableFilePath}}{{end}}" form="form-one"
         required type="text" id="PSExecutableFilePath" name="PSExecutableFilePath"
         placeholder="Insira o caminho para local do executável do Photoshop" />
 </div>
 <div class="input-container">
     <label for="ExportDir">Local para exportação dos arquivos</label>
-    <input value="{{ if .FirstForm.ExportDir }}{{.FirstForm.ExportDir}}{{end}}" form="form-one" required type="text"
+    <input value="{{ if .FinalData.ExportDir }}{{.FinalData.ExportDir}}{{end}}" form="form-one" required type="text"
         id="ExportDir" name="ExportDir" placeholder="Insira o caminho para local do executável do Photoshop" />
 </div>
 <div class="input-container">
     <label for="PrefixNameForFile">Prefixo para nome dos arquivos exportados</label>
-    <input value="{{ if .FirstForm.PrefixNameForFile }}{{.FirstForm.PrefixNameForFile}}{{end}}" form="form-one" required
+    <input value="{{ if .FinalData.PrefixNameForFile }}{{.FinalData.PrefixNameForFile}}{{end}}" form="form-one" required
         type="text" id="PrefixNameForFile" name="PrefixNameForFile"
         placeholder="Insira o prefixo para nome dos arquivos exportados" />
 </div>
 <div class="input-container">
     <p>Extensões para exportação</p>
     <div class="checkbox">
-        <input {{range $index, $value := .FirstForm.ExportTypes}}{{if eq $value 0}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-psd" name="ExportTypes" value="0">
+        <input {{range $index, $value := .FinalData.ExportTypes}}{{if eq $value 0}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-psd" name="ExportTypes" value="0">
         <label class="checkbox-label" for="export-type-psd">PSD</label>
-        <input {{range $index, $value := .FirstForm.ExportTypes}}{{if eq $value 1}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-png" name="ExportTypes" value="1">
+        <input {{range $index, $value := .FinalData.ExportTypes}}{{if eq $value 1}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-png" name="ExportTypes" value="1">
         <label class="checkbox-label" for="export-type-png">PNG</label>
-        <input {{range $index, $value := .FirstForm.ExportTypes}}{{if eq $value 2}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-jpg" name="ExportTypes" value="2">
+        <input {{range $index, $value := .FinalData.ExportTypes}}{{if eq $value 2}} checked{{end}}{{end}} form="form-one" type="checkbox" id="export-type-jpg" name="ExportTypes" value="2">
         <label class="checkbox-label" for="export-type-jpg">JPG</label>
     </div>
 </div>
