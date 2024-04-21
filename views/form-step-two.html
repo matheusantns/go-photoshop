@@ -23,7 +23,10 @@
     {{end}}
     {{template "insert-new-image-layer.html" .}}
 </div>
-{{template "navigation-buttons.html" . }}
-<form method="post" hx-post="/step-two" id="form-two" hx-target="#root-container" class="form-container">
+<div class="button-container">
+    <button type="button" method="get" hx-get="/" hx-target="#root-container" class="back">Voltar</button>
+    <button hx-trigger="click[validateForm(event, 'TextLayer')]" form="form-two" type="submit">Próximo</button>
+</div>
+<form hx-push-url="true" method="post" hx-post="/step-two" id="form-two" hx-target="#root-container" class="form-container">
 </form>
 {{ end }}

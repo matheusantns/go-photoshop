@@ -37,6 +37,6 @@
     </div>
 </div>
 <button hx-trigger="click[validateForm(event, 'ExportTypes')]" form="form-one" type="submit">Próximo</button>
-<form method="post" hx-post="/step-one" id="form-one" hx-target="#root-container" class="form-container">
+<form hx-push-url="true" method="post" hx-post="/step-one" id="form-one" hx-target="#root-container" class="form-container">
 </form>
 {{ end }}

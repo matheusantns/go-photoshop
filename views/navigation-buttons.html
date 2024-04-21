@@ -1,6 +1,0 @@
-{{block "NavigationButtons" . }}
-<div class="button-container">
-    <button type="button" method="get" hx-get="{{ .NavigationButtons }}" hx-target="#root-container" class="back">Voltar</button>
-    <button hx-trigger="click[validateForm(event, 'TextLayer')]" form="form-two" type="submit">Próximo</button>
-</div>
-{{end}}

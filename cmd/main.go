@@ -2,10 +2,13 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
+	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -49,6 +52,19 @@ func createLayers(names []string, layerType string) []Layer {
 	return layers
 }
 
+func runPhotoshop(PSExecutableFilePath string) error {
+	scriptPath := "C:\\Users\\teteu\\OneDrive\\Documentos\\Coding\\ps-automate\\js\\ps_script.js"
+
+	cmd := exec.Command(PSExecutableFilePath, "-r", scriptPath)
+
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("deu erro - %w", err)
+	}
+
+	return nil
+}
+
 type Steps struct {
 	Steps  []int
 	Active int
@@ -70,6 +86,7 @@ type SecondForm struct {
 
 type ThirdForm struct {
 	Fields []string
+	Data   [][]string
 }
 
 type PageData struct {
@@ -81,11 +98,20 @@ type PageData struct {
 	ThirdForm          ThirdForm
 	Error              Error
 	AvailableTextLayer []psd.Layer
-	BackButtonRoute    string
-	ForwardButtonRoute string
+}
+
+type FinalData struct {
+	PSDTemplate          string
+	PSExecutableFilePath string
+	ExportDir            string
+	ExportTypes          []psd.ExportType
+	PrefixNameForFile    string
+	Layers               []Layer
+	Data                 []map[string]string
 }
 
 var pageData PageData
+var finalData FinalData
 
 func main() {
 	e := echo.New()
@@ -143,9 +169,6 @@ func main() {
 			Text:  "",
 			Valid: false,
 		}
-		pageData.BackButtonRoute = "/"
-		pageData.ForwardButtonRoute = "/step-two"
-		pageData.FieldToValidate = "TextLayer"
 
 		return c.Render(200, "form-step-two.html", pageData)
 	})
@@ -164,13 +187,17 @@ func main() {
 
 		imageLayers := createLayers(request["ImageLayer"], "Image")
 		textLayers := createLayers(request["TextLayer"], "Text")
-		pageData.BackButtonRoute = "/"
-		pageData.ForwardButtonRoute = "/step-two"
 
 		pageData.SecondForm.Layers = append(imageLayers, textLayers...)
 		pageData.Steps.Active = 3
 		pageData.Title = "Insira o CSV com seus dados"
 
+		return c.Render(200, "form-step-three.html", pageData)
+	})
+
+	e.GET("/step-three", func(c echo.Context) error {
+		pageData.Steps.Active = 3
+		pageData.Title = "Insira o CSV com seus dados"
 		return c.Render(200, "form-step-three.html", pageData)
 	})
 
@@ -190,12 +217,69 @@ func main() {
 
 		csvReader := csv.NewReader(src)
 		csvReader.Comma = ';'
-		pageData.ThirdForm.Fields, err = csvReader.Read()
+
+		pageData.ThirdForm.Data, err = csvReader.ReadAll()
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		pageData.ThirdForm.Fields = pageData.ThirdForm.Data[0]
+
 		return c.Render(200, "form-step-four.html", pageData)
+	})
+
+	e.POST("/step-four", func(c echo.Context) error {
+		finalData.PSDTemplate = pageData.FirstForm.PSDTemplate
+		finalData.PSExecutableFilePath = pageData.FirstForm.PSExecutableFilePath
+		finalData.PrefixNameForFile = pageData.FirstForm.PrefixNameForFile
+		finalData.ExportDir = pageData.FirstForm.ExportDir
+		finalData.ExportTypes = pageData.FirstForm.ExportTypes
+		finalData.Layers = pageData.SecondForm.Layers
+
+		request, err := c.FormParams()
+		if err != nil {
+			return fmt.Errorf("deu erro - %w", err)
+		}
+
+		mapping := make(map[string]string)
+		for _, values := range request {
+			newKey := values[1]
+			newValue := values[0]
+			mapping[newKey] = newValue
+		}
+
+		results := []map[string]string{}
+
+		for _, line := range pageData.ThirdForm.Data[1:] {
+			item := map[string]string{}
+
+			for i, value := range line {
+				defaultHeader := pageData.ThirdForm.Data[0][i]
+				newHeader, ok := mapping[defaultHeader]
+				if !ok {
+					continue
+				}
+				item[newHeader] = value
+			}
+
+			results = append(results, item)
+		}
+
+		finalData.Data = results
+
+		jason, err := json.Marshal(finalData)
+		if err != nil {
+			return fmt.Errorf("deu erro - %w", err)
+		}
+
+		err = os.WriteFile("js\\parameters.json", jason, 0644)
+		if err != nil {
+			return fmt.Errorf("Error writing JSON data to file: %w", err)
+		}
+
+		runPhotoshop(finalData.PSExecutableFilePath)
+
+		return c.Render(200, "processing.html", nil)
 	})
 
 	e.Logger.Fatal(e.Start(":42069"))

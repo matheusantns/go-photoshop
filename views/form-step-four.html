@@ -2,5 +2,11 @@
 {{ template "progress-bar.html" . }}
 {{ template "form-title.html" . }}
 {{ template "table-assign-fields.html" .}}
-
-{{end}}
+<br>
+<div class="button-container">
+    <button type="button" method="get" hx-get="/step-three" hx-target="#root-container" class="back">Voltar</button>
+    <button form="form-four" type="submit">Exportar</button>
+</div>
+<form hx-push-url="true" method="post" hx-post="/step-four" id="form-four" hx-target="#root-container" class="form-container">
+</form>
+{{end}} 

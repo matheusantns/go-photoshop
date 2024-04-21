@@ -12,6 +12,6 @@
         <button form="form-three" type="submit">Próximo</button>
     </div>
 </div>
-<form enctype="multipart/form-data" method="post" hx-post="/step-three" id="form-three" hx-target="#root-container" class="form-container">
+<form hx-push-url="true" enctype="multipart/form-data" method="post" hx-post="/step-three" id="form-three" hx-target="#root-container" class="form-container">
 </form>
 {{end}}
